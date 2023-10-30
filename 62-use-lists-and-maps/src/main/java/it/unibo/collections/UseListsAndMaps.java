@@ -1,13 +1,20 @@
 package it.unibo.collections;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Example class using {@link List} and {@link Map}.
  *
  */
 public final class UseListsAndMaps {
+
+    private static final int DELTA = 1000;
+    private static final int ELEMS = 100000;
 
     private UseListsAndMaps() {
     }
@@ -21,19 +28,31 @@ public final class UseListsAndMaps {
          * 1) Create a new ArrayList<Integer>, and populate it with the numbers
          * from 1000 (included) to 2000 (excluded).
          */
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for(int i = 0; i<DELTA; i++) {
+            numbers.add(i, DELTA+i+1);
+        }
         /*
          * 2) Create a new LinkedList<Integer> and, in a single line of code
          * without using any looping construct (for, while), populate it with
          * the same contents of the list of point 1.
          */
+        LinkedList<Integer> lnumbers = new LinkedList<>();
+        lnumbers.addAll(numbers);
         /*
          * 3) Using "set" and "get" and "size" methods, swap the first and last
          * element of the first list. You can not use any "magic number".
          * (Suggestion: use a temporary variable)
          */
+        final Integer app = lnumbers.getLast();
+        lnumbers.set(lnumbers.indexOf(lnumbers.getLast()), lnumbers.getFirst());
+        lnumbers.set(lnumbers.indexOf(lnumbers.getFirst()), app);
         /*
          * 4) Using a single for-each, print the contents of the arraylist.
          */
+        for(final Integer arr : numbers) {
+            System.out.println(arr);
+        }
         /*
          * 5) Measure the performance of inserting new elements in the head of
          * the collection: measure the time required to add 100.000 elements as
@@ -41,12 +60,69 @@ public final class UseListsAndMaps {
          * using the previous lists. In order to measure times, use as example
          * TestPerformance.java.
          */
+        long timeA = System.nanoTime();
+        for(int i = 1; i<=ELEMS; i++) {
+            numbers.add(0, i);
+        }
+        timeA = System.nanoTime() - timeA;
+        var millis = TimeUnit.NANOSECONDS.toMillis(timeA);
+        System.out.println("Number of elements: "
+                + ELEMS
+                + " inserted in the first position of an ArrayList took "
+                + timeA
+                + "ns ("
+                + millis
+                + "ms)"
+        );
+
+        long timeL = System.nanoTime();
+        for(int i = 1; i<=ELEMS; i++) {
+            lnumbers.addFirst(i);
+        }
+        timeL = System.nanoTime() - timeL;
+        var millisL = TimeUnit.NANOSECONDS.toMillis(timeL);
+        System.out.println("Number of elements: "
+                + ELEMS
+                + " inserted in the first position of a LinkedList took "
+                + timeL
+                + "ns ("
+                + millisL
+                + "ms)"
+        );
+
         /*
          * 6) Measure the performance of reading 1000 times an element whose
          * position is in the middle of the collection for both ArrayList and
          * LinkedList, using the collections of point 5. In order to measure
          * times, use as example TestPerformance.java.
          */
+        timeA = System.nanoTime();
+        for(int i = 1; i<=DELTA; i++) {
+            numbers.get(numbers.size()/2);
+        }
+        timeA = System.nanoTime() - timeA;
+        millis = TimeUnit.NANOSECONDS.toMillis(timeA);
+        System.out.println(DELTA
+                + " times that the middle element was read in an ArrayList took "
+                + timeA
+                + "ns ("
+                + millis
+                + "ms)"
+        );
+
+        timeL = System.nanoTime();
+        for(int i = 1; i<=DELTA; i++) {
+            lnumbers.get(lnumbers.size()/2);
+        }
+        timeL = System.nanoTime() - timeL;
+        millisL = TimeUnit.NANOSECONDS.toMillis(timeL);
+        System.out.println(DELTA
+                + " times that the middle element was read in a LinkedList took "
+                + timeL
+                + "ns ("
+                + millisL
+                + "ms)"
+        );
         /*
          * 7) Build a new Map that associates to each continent's name its
          * population:
@@ -63,8 +139,20 @@ public final class UseListsAndMaps {
          *
          * Oceania -> 38,304,000
          */
+        final Map <String, Double> continents = new HashMap<>();
+        continents.put("Africa", 1_110_635_000.0);
+        continents.put("Americas", 972_005_000.0);
+        continents.put("Antartica", 0.0);
+        continents.put("Asia", 4_298_723_000.0);
+        continents.put("Europe", 742_452_000.0);
+        continents.put("Oceania", 38_304_000.0);
         /*
          * 8) Compute the population of the world
          */
+        double population = 0;
+        for(final Double comp : continents.values()) {
+            population = population + comp.doubleValue();
+        }
+        System.out.print("Population of the world: " + population);
     }
 }
