@@ -36,7 +36,7 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      * In order to save the people followed by a user organized in groups, adopt
      * a generic-type Map:  think of what type of keys and values would best suit the requirements
      */
-
+    private Map<String, Set<U>> followers; 
     /*
      * [CONSTRUCTORS]
      *
@@ -48,6 +48,7 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      * - username
      * - age and every other necessary field
      */
+
     /**
      * Builds a user participating in a social network.
      *
@@ -62,21 +63,28 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *            application
      */
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
-        super(null, null, null, 0);
+        super(name, surname, user, userAge);
+        this.followers = new HashMap<>();
     }
 
     /*
      * 2) Define a further constructor where the age defaults to -1
      */
-
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+        this(name, surname, user, -1);
+    }
     /*
      * [METHODS]
      *
      * Implements the methods below
      */
-    @Override
     public boolean addFollowedUser(final String circle, final U user) {
-        return false;
+        Set<U> userSet = this.followers.get(circle);
+        if(userSet == null) {
+            userSet = new HashSet<>();
+            this.followers.put(circle, userSet);
+        }
+        return userSet.add(user);
     }
 
     /**
@@ -84,13 +92,19 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      * [NOTE] If no group with groupName exists yet, this implementation must
      * return an empty Collection.
      */
-    @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
-        return null;
+        final Collection<U> followedList = this.followers.get(groupName);
+        if(followedList == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(followedList);
     }
 
-    @Override
     public List<U> getFollowedUsers() {
-        return null;
+        final Set<U> usersList = new HashSet<>();
+        for(final Set<U> users : this.followers.values()) {
+            usersList.addAll(users);
+        }
+        return new ArrayList<>(usersList);
     }
 }
