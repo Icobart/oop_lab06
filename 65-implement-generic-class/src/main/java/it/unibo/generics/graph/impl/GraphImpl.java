@@ -14,7 +14,6 @@ import it.unibo.generics.graph.api.Graph;
 public class GraphImpl<N> implements Graph<N> {
 
     private final Map<N, Set<N>> nodes = new LinkedHashMap<>();
-    //private List<N> path = new LinkedList<>();
 
     public GraphImpl() {
 
