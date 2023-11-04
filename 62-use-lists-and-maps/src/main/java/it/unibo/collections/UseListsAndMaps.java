@@ -28,25 +28,25 @@ public final class UseListsAndMaps {
          * 1) Create a new ArrayList<Integer>, and populate it with the numbers
          * from 1000 (included) to 2000 (excluded).
          */
-        ArrayList<Integer> numbers = new ArrayList<>();
+        List<Integer> numbers = new ArrayList<>();
         for(int i = 0; i<DELTA; i++) {
-            numbers.add(i, DELTA+i+1);
+            numbers.add(DELTA+i+1);
         }
         /*
          * 2) Create a new LinkedList<Integer> and, in a single line of code
          * without using any looping construct (for, while), populate it with
          * the same contents of the list of point 1.
          */
-        LinkedList<Integer> lnumbers = new LinkedList<>();
+        List<Integer> lnumbers = new LinkedList<>();
         lnumbers.addAll(numbers);
         /*
          * 3) Using "set" and "get" and "size" methods, swap the first and last
          * element of the first list. You can not use any "magic number".
          * (Suggestion: use a temporary variable)
          */
-        final Integer app = lnumbers.getLast();
-        lnumbers.set(lnumbers.indexOf(lnumbers.getLast()), lnumbers.getFirst());
-        lnumbers.set(lnumbers.indexOf(lnumbers.getFirst()), app);
+        final Integer app = numbers.get(numbers.size()-1);
+        numbers.set(numbers.size()-1, numbers.get(0));
+        numbers.set(0, app);
         /*
          * 4) Using a single for-each, print the contents of the arraylist.
          */
@@ -61,7 +61,7 @@ public final class UseListsAndMaps {
          * TestPerformance.java.
          */
         long timeA = System.nanoTime();
-        for(int i = 1; i<=ELEMS; i++) {
+        for(int i = 0; i<ELEMS; i++) {
             numbers.add(0, i);
         }
         timeA = System.nanoTime() - timeA;
@@ -76,8 +76,8 @@ public final class UseListsAndMaps {
         );
 
         long timeL = System.nanoTime();
-        for(int i = 1; i<=ELEMS; i++) {
-            lnumbers.addFirst(i);
+        for(int i = 0; i<ELEMS; i++) {
+            lnumbers.add(0, i);
         }
         timeL = System.nanoTime() - timeL;
         var millisL = TimeUnit.NANOSECONDS.toMillis(timeL);
@@ -97,7 +97,7 @@ public final class UseListsAndMaps {
          * times, use as example TestPerformance.java.
          */
         timeA = System.nanoTime();
-        for(int i = 1; i<=DELTA; i++) {
+        for(int i = 0; i<DELTA; i++) {
             numbers.get(numbers.size()/2);
         }
         timeA = System.nanoTime() - timeA;
@@ -111,7 +111,7 @@ public final class UseListsAndMaps {
         );
 
         timeL = System.nanoTime();
-        for(int i = 1; i<=DELTA; i++) {
+        for(int i = 1; i<DELTA; i++) {
             lnumbers.get(lnumbers.size()/2);
         }
         timeL = System.nanoTime() - timeL;
@@ -139,19 +139,19 @@ public final class UseListsAndMaps {
          *
          * Oceania -> 38,304,000
          */
-        final Map <String, Double> continents = new HashMap<>();
-        continents.put("Africa", 1_110_635_000.0);
-        continents.put("Americas", 972_005_000.0);
-        continents.put("Antartica", 0.0);
-        continents.put("Asia", 4_298_723_000.0);
-        continents.put("Europe", 742_452_000.0);
-        continents.put("Oceania", 38_304_000.0);
+        final Map <String, Long> continents = new HashMap<>();
+        continents.put("Africa", 1_110_635_000L);
+        continents.put("Americas", 972_005_000L);
+        continents.put("Antartica", 0L);
+        continents.put("Asia", 4_298_723_000L);
+        continents.put("Europe", 742_452_000L);
+        continents.put("Oceania", 38_304_000L);
         /*
          * 8) Compute the population of the world
          */
-        double population = 0;
-        for(final Double comp : continents.values()) {
-            population = population + comp.doubleValue();
+        long population = 0L;
+        for(final long comp : continents.values()) {
+            population = population + comp;
         }
         System.out.print("Population of the world: " + population);
     }
