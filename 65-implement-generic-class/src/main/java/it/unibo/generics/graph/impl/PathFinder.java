@@ -31,7 +31,11 @@ class PathFinder<N> {
     }
 
     public String toString() {
-        return "PathFinder [previous=" + previous + ", current=" + current + "]";
+        final List<String> printPath = new LinkedList<>();
+        for(final N node : resultPath()) {
+            printPath.add(node.toString());
+        }
+        return String.join(" -> ", printPath);
     }
 
 }

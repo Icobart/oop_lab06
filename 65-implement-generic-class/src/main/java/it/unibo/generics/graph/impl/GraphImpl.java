@@ -1,5 +1,6 @@
 package it.unibo.generics.graph.impl;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -15,51 +16,62 @@ public class GraphImpl<N> implements Graph<N> {
     private final Map<N, Set<N>> nodes = new LinkedHashMap<>();
     //private List<N> path = new LinkedList<>();
 
-    public void addNode(N node) {
-        if(nodes.get(node) == null && node != null) {
-            nodes.put(node, new HashSet<>());
+    public GraphImpl() {
+
+    }
+
+    public void addNode(final N node) {
+        if(!this.nodes.containsKey(node) && node != null) {
+            this.nodes.put(node, new HashSet<>());
         }
     }
 
-    public void addEdge(N source, N target) {
-        if(source != null && target != null) {
-            nodes.get(source).add(target);
+    public void addEdge(final N source, final N target) {
+        if(source != null && target != null && this.nodes.containsKey(source)
+             && this.nodes.containsKey(target)) {
+            this.nodes.get(source).add(target);
         }    
     }
 
     public Set<N> nodeSet() {
-        return new HashSet<>(nodes.keySet());
-        //return nodes.keySet();
+        return new HashSet<>(this.nodes.keySet());
     }
 
-    public Set<N> linkedNodes(N node) {
-        return nodes.get(node);
+    public Set<N> linkedNodes(final N node) {
+        return this.nodes.get(node);
     }
 
-    public List<N> getPath(N source, N target) {
-        List<N> path = new LinkedList<>();
-        if(source != null && target != null) {
-            path=graphVisit(source, target);
+    public List<N> getPath(final N source, final N target) {
+        if(source != null && target != null && this.nodes.containsKey(source)
+             && this.nodes.containsKey(target)) {
+            return graphVisit(source, target);
+        } else {
+            return Collections.emptyList();
         }
-        
-        return path;
     }
 
-    private List<N> graphVisit (N source, N target) {
+    private List<N> graphVisit (final N source, final N target) {
         final Deque<PathFinder<N>> savedNode = new LinkedList<>();
         savedNode.add(new PathFinder<>(source));
         final Set<N> visited = new HashSet<>();
-        while(savedNode != null && visited.size() < nodeSet().size()) {
+        while(!savedNode.isEmpty() && visited.size() < nodeSet().size()) {
             final PathFinder<N> last = savedNode.removeFirst();
             final N nodeVisit = last.getPosition();
-            if(nodeVisit == target) {
+            if(nodeVisit.equals(target)) {
                 return last.resultPath();
-            }
-            else if(!visited.contains(nodeVisit)){
+            } else if(!visited.contains(nodeVisit)){
                 visited.add(nodeVisit);
+                updateDeque(savedNode, last);
             }
         }
-        return new LinkedList<>();
+        return Collections.emptyList();
+    }
+
+    private void updateDeque(final Deque<PathFinder<N>> savedNode, final PathFinder<N> last) {
+        final N currentPos = last.getPosition();
+        for (final N nextNode : linkedNodes(currentPos)) {
+            savedNode.addFirst(new PathFinder<>(last, nextNode));
+        }
     }
     
 }
