@@ -1,5 +1,6 @@
 package it.unibo.generics.graph.impl;
 
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -37,9 +38,28 @@ public class GraphImpl<N> implements Graph<N> {
 
     public List<N> getPath(N source, N target) {
         List<N> path = new LinkedList<>();
-        
+        if(source != null && target != null) {
+            path=graphVisit(source, target);
+        }
         
         return path;
+    }
+
+    private List<N> graphVisit (N source, N target) {
+        final Deque<PathFinder<N>> savedNode = new LinkedList<>();
+        savedNode.add(new PathFinder<>(source));
+        final Set<N> visited = new HashSet<>();
+        while(savedNode != null && visited.size() < nodeSet().size()) {
+            final PathFinder<N> last = savedNode.removeFirst();
+            final N nodeVisit = last.getPosition();
+            if(nodeVisit == target) {
+                return last.resultPath();
+            }
+            else if(!visited.contains(nodeVisit)){
+                visited.add(nodeVisit);
+            }
+        }
+        return new LinkedList<>();
     }
     
 }

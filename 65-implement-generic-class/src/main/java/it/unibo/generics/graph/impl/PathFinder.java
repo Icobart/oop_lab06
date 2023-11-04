@@ -20,7 +20,7 @@ class PathFinder<N> {
         return this.current;
     }
 
-    public List<N> visualPath() {
+    public List<N> resultPath() {
         final List<N> pathList = new LinkedList<>();
         PathFinder<N> node = this;
         do {
